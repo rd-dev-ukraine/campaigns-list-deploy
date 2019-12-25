@@ -2,11 +2,12 @@ version: "3"
 services:
   mongodb:
     image: mongo
-    volumes:
-      - ./data/db:/data/db
     container_name: mongo
   api:
     build: https://github.com/rd-dev-ukraine/campaigns-list-server.git
+    environment: 
+      - PORT=4000
+      - DB_URL=mongodb://mongodb/campaigns
     depends_on:
       - mongodb
     ports:
@@ -15,7 +16,10 @@ services:
       - mongodb
 
   client:
-    build: https://github.com/rd-dev-ukraine/campaigns-list-client.git
+    build: 
+      context: https://github.com/rd-dev-ukraine/campaigns-list-client.git
+      args: 
+        REACT_APP_API_URL: http://localhost:4000
     stdin_open: true
     tty: true
     depends_on: 
